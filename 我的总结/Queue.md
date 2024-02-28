@@ -1,42 +1,46 @@
-、、、java
+```java
 import java.util.LinkedList;
 import java.util.Queue;
+```
+
+
 
 public class QueueExample {
 
-    public static void main(String[] args) {
-        // 使用LinkedList实现Queue
-        Queue<String> queue = new LinkedList<>();
+```java
+public static void main(String[] args) {
+    // 使用LinkedList实现Queue
+    Queue<String> queue = new LinkedList<>();
 
-        // 添加元素到队列
-        queue.offer("A");
-        queue.offer("B");
-        queue.offer("C");
+    // 添加元素到队列
+    queue.offer("A");
+    queue.offer("B");
+    queue.offer("C");
 
-        System.out.println("Queue elements: " + queue);
+    System.out.println("Queue elements: " + queue);
 
-        // 检查队首元素（不移除）
-        String peekElement = queue.peek();
-        System.out.println("Peek element: " + peekElement);
+    // 检查队首元素（不移除）
+    String peekElement = queue.peek();
+    System.out.println("Peek element: " + peekElement);
 
-        // 检查并移除队首元素
-        String pollElement = queue.poll();
-        System.out.println("Polled element: " + pollElement);
-        System.out.println("Updated Queue elements: " + queue);
+    // 检查并移除队首元素
+    String pollElement = queue.poll();
+    System.out.println("Polled element: " + pollElement);
+    System.out.println("Updated Queue elements: " + queue);
 
-        // 添加更多元素
-        queue.offer("D");
-        queue.offer("E");
+    // 添加更多元素
+    queue.offer("D");
+    queue.offer("E");
 
-        // 遍历队列并处理每个元素
-        System.out.println("Iterating through the Queue:");
-        while (!queue.isEmpty()) {
-            String element = queue.poll();
-            System.out.println("Processed element: " + element);
-        }
+    // 遍历队列并处理每个元素
+    System.out.println("Iterating through the Queue:");
+    while (!queue.isEmpty()) {
+        String element = queue.poll();
+        System.out.println("Processed element: " + element);
     }
 }
-、、、
+```
+}
 
 LinkedList:
 
