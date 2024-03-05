@@ -10,4 +10,102 @@
 4. **操作字段：** 可以获取和设置对象的字段的值，包括公共字段、私有字段以及静态字段。
 5. **动态代理：** 可以使用反射来创建动态代理对象，以实现在运行时生成代理类。
 
-2.
+#### 2. java的依赖注入（DI——Dependency Injection）
+
+- 依赖注入是一种**设计模式**，也是Spring框架的核心概念之一。
+
+- 作用是去除Java类之间的依赖关系，实现松耦合，减少依赖性，增强可重用性，增加可读性、可扩展性。
+
+  ```java
+  // 紧耦合
+  class Player{  
+      Weapon weapon;  
+  
+      Player(){  
+          // 与 Sword类紧密耦合
+          this.weapon = new Sword();  
+  
+      }  
+  
+      public void attack() {
+          weapon.attack();
+      }
+  }
+  // 松耦合
+  class Player{  
+      Weapon weapon;  
+  
+      // weapon 被注入进来
+      Player(Weapon weapon){  
+          this.weapon = weapon;  
+  
+      }  
+  
+      public void attack() {
+          weapon.attack();
+      }
+  
+      public void setWeapon(Weapon weapon){  
+          this.weapon = weapon;  
+      }  
+  }
+  ```
+
+- 通常有三种依赖注入的方式：
+
+  - 构造器注入（常用）
+
+    ```java
+    /**
+     * 电脑类
+     */
+    public class Computer {
+    
+       /**
+        * 电脑的打印机
+        */
+       private Printer printer;
+       
+       // 省略getter和setter
+    
+    }
+    public class Computer {
+    
+       /**
+        * 电脑的打印机
+        */
+       private Printer printer = new Printer();
+    
+    }
+    
+    /**
+     * 电脑类带参构造器
+     * @param printer 传入打印机实例
+     */
+    public Computer(Printer printer) {
+       // 构造器注入
+       this.printer = printer;
+    }
+    
+    Printer printer = new Printer();
+    // 实例化电脑类，通过构造器注入了打印机实例（依赖）
+    Computer computer = new Computer(printer);
+    computer.getPrinter().print("构造器注入");
+    ```
+
+  - setter注入（常用）
+
+    ```java
+    public void setPrinter(Printer printer) {
+       this.printer = printer;
+    }
+    
+    Printer printer = new Printer();
+    // 实例化电脑类
+    Computer computer = new Computer();
+    // 通过setter方法注入了打印机实例（依赖）
+    computer.setPrinter(printer);
+    computer.getPrinter().print("setter注入");
+    ```
+
+  - 接口注入

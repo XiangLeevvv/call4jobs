@@ -232,6 +232,36 @@ hvals 'key'
 
 #### 12. Zset基本类型
 
+- zset底层的存储结构包括`ziplist`或`skiplist`，只有在以下两个条件满足时使用`ziplist`：
+
+  - 有序集合保存的元素数量小于**128**个
+  - 有序集合保存的所有元素长度都小于**64**字节
+
+- `ziplist`编码的有序集合使用紧挨在一起的压缩列表节点来保存，**第一个节点保存`member`，第二个保存`score`**。**`ziplist`内的集合元素按score从小到大排序**，score较小的排在表头位置。
+
+- `skiplist`是受**多层链表**的想法设计而来（下面是一个三层链表，每层链表的节点是上一层的一半，查询一个节点的时间是O(logn)）。`skiplist`为了避免这一问题，它不要求上下相邻两层链表之间的节点个数有严格的对应关系，而是为每个节点**随机选出**一个层数(level)。
+
+  ![](/Users/chocolate/Documents/project/call4jobs/我的总结/多层链表.webp)
+
+  ​							三层链表
+
+  ![](/Users/chocolate/Documents/project/call4jobs/我的总结/skiplist.webp)
+
+  ​							skiplist
+
+- ```c
+  // 字典的key保存元素的值，value保存元素的score
+  // 跳跃表和哈希表的结合使用可以使查找单个member和范围查询都有非常高的效率
+  typedef struct zset{
+       //跳跃表
+       zskiplist *zsl;
+       //字典
+       dict *dice;
+  } zset;
+  ```
+
+- 
+
 - 有序集合，在set基础上增加了一个排序值
 
 ```bash
