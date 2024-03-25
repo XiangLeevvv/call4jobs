@@ -23,6 +23,22 @@ class Test {
         }
     }
 
+    public static void shell(int[] arr) {
+        int gap = arr.length / 2;
+        while(gap > 0) {
+            for(int i = gap; i < arr.length; i++) {
+                int cur = arr[i];
+                int pre = i - gap;
+                while(pre >= 0 && arr[pre] > cur) {
+                    arr[pre + gap] = arr[pre];
+                    pre -= gap;
+                }
+                arr[pre + gap] = cur;
+            }
+            gap /= 2;
+        }
+    }
+
     // 归并排序
     // 稳定性：稳定
     // 时间复杂度：O(nlogn)
@@ -61,17 +77,46 @@ class Test {
     // 快速排序
     // 稳定性：不稳定
     // 时间复杂度：最好：O(nlogn),平均：O(nlogn),最差：O(n^2)
+    public static void quickSort(int[] arr) {
+        if(arr.length <= 1) return;
+        sort(arr, 0, arr.length - 1);
+    }
+    public static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+    public static void sort(int[] arr, int low, int high) {
+        if(low >= high) return;
+        int middle = swapAndFind(arr, low, high);
+        sort(arr, low, middle - 1);
+        sort(arr, middle + 1, high);
+    }
+    public static int swapAndFind(int[] arr, int low, int high) {
+        int base = arr[low];
+        int i = low, j = high;
+        while(i < j) {
+            while(i < j && arr[j] >= base) j--;
+            while(i < j && arr[i] <= base) i++;
+            swap(arr, i, j);
+        }
+        swap(arr, low, i);
+        return i;
+    }
     
     // 堆排序
     // 稳定性：不稳定
     // 时间复杂度：O(nlogn)
     public static void main(String[] args) {
-        int[] arr = {2,1,6,3,8,3,4,7,0};
+        int[] arr = {2,1,6,3,8,3,4,7,1,0};
         // shellSort(arr);
-        int[] res = mergeSort(arr);
-        for(int i = 0; i < res.length; i++) {
-            System.out.println(res[i]);
+        quickSort(arr);
+        // shell(arr);
+        // int[] res = mergeSort(arr);
+        for(int i = 0; i < arr.length; i++) {
+            System.out.println(arr[i]);
         }
+
         // for(int i = 0; i < 10; i++)
         //     System.out.println("hello");
         double x = 2;

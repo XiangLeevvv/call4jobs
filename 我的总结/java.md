@@ -506,7 +506,34 @@ System.out.println(c == d);
 
 **在线程持有写锁的情况下，该线程可以继续获取读锁。**（获取读锁时如果发现写锁被占用，只有写锁没有被当前线程占用的情况才会获取失败）
 
-#### *13. 线程池
+#### 13. CAS和AQS
+
+###### CAS
+
+CAS（Compare and Swap）是一种原子操作，通常用于实现并发算法和数据结构，解决多线程环境下的数据竞争和并发访问的问题。在 Java 中，CAS 机制主要应用于以下几个方面：
+
+1. **并发容器**： Java 提供了一些线程安全的并发容器，如 `ConcurrentHashMap`、`ConcurrentLinkedQueue` 等，它们内部使用 CAS 操作来实现线程安全的数据访问。
+
+2. **Atomic 类**： Java 提供了一系列原子类，如 `AtomicInteger`、`AtomicLong`、`AtomicReference` 等，它们提供了一些原子操作方法，内部使用了 CAS 机制来保证这些操作的原子性。
+
+3. **Java 中的锁实现**： Java 中的一些锁实现，如 `java.util.concurrent.locks.ReentrantLock` 和 `java.util.concurrent.locks.LockSupport`，在底层使用了 CAS 机制来实现对共享资源的加锁和解锁。
+
+   在 Java 中，`ReentrantLock` 类是一种可重入的互斥锁，它是基于CAS（比较并交换）实现的。具体地，`ReentrantLock` 内部使用了 `AbstractQueuedSynchronizer`（AQS）作为同步器，而 AQS 则是基于 CAS 操作来实现同步的。
+
+   `ReentrantLock` 中的关键方法 `lock()` 和 `unlock()` 就是基于 CAS 操作来实现的。当一个线程尝试获取锁时，如果当前锁的状态为可获取（未被其他线程持有），则使用 CAS 操作将锁的状态改为被当前线程持有；当一个线程释放锁时，同样会使用 CAS 操作将锁的状态改为可获取状态，以允许其他线程获取锁。
+
+###### AQS
+
+AQS（AbstractQueuedSynchronizer）是 Java 中用于实现同步器（Synchronizer）的框架类，位于 `java.util.concurrent.locks` 包中。它提供了一种高效且灵活的机制来实现各种类型的**同步器**，如互斥锁、信号量、倒计时门栓等，并且是许多并发工具和类的基础，如 `ReentrantLock`、`Semaphore`、`CountDownLatch` 等。
+
+AQS 使用了一个 FIFO 的等待队列来管理线程的等待状态，它通过内部的状态变量（`state`）来表示同步状态，并提供了两种模式的同步操作：独占模式和共享模式。
+
+- **独占模式（Exclusive Mode）**：独占模式是一次只允许一个线程访问共享资源的模式，常用于实现互斥锁。在独占模式下，同步器维护一个独占的线程（即持有锁的线程）以及一个等待队列，只有持有锁的线程才能访问共享资源，其他线程需要等待持有锁的线程释放锁才能继续执行。
+- **共享模式（Shared Mode）**：共享模式允许多个线程同时访问共享资源的模式，常用于实现信号量、倒计时门栓等并发控制工具。在共享模式下，同步器维护一个共享资源和一个等待队列，多个线程可以同时访问共享资源，但是可能需要等待一定条件满足后才能访问。
+
+AQS 的核心是使用 `compareAndSet`（CAS）操作来实现对同步状态`state`的原子更新，同时通过内置的等待队列来管理线程的阻塞和唤醒。具体来说，AQS 提供了 `acquire` 和 `release` 两种方法来分别实现同步状态的获取和释放，开发者可以通过继承 `AbstractQueuedSynchronizer` 类并实现其中的抽象方法来定制自己的同步器。
+
+#### *14. 线程池
 
 线程池就是管理一系列线程的资源池。当有任务要处理时，直接从线程池中获取线程来处理，处理完之后线程并不会立即被销毁，而是等待下一个任务。
 

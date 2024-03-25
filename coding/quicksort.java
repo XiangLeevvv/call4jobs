@@ -16,6 +16,12 @@ public class quicksort {
         sort(nums, low, pivotIndex - 1); // 递归处理左半部分
         sort(nums, pivotIndex + 1, high); // 递归处理右半部分
     }
+
+    public void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
     
     // 划分函数，选取基准值并将小于基准值的元素放到左边，大于基准值的元素放到右边
     private int partition(int[] nums, int low, int high) {
@@ -25,19 +31,21 @@ public class quicksort {
             while (left < right && nums[right] >= pivot) { // 从右向左找第一个小于基准值的元素
                 right--;
             }
-            nums[left] = nums[right]; // 将小于基准值的元素移到左边
+            // nums[left] = nums[right]; // 将小于基准值的元素移到左边
             while (left < right && nums[left] <= pivot) { // 从左向右找第一个大于基准值的元素
                 left++;
             }
-            nums[right] = nums[left]; // 将大于基准值的元素移到右边
+            // nums[right] = nums[left]; // 将大于基准值的元素移到右边
+            swap(nums, left, right);
         }
-        nums[left] = pivot; // 将基准值放到正确的位置
+        // nums[left] = pivot; // 将基准值放到正确的位置
+        swap(nums, low, left);
         return left; // 返回基准值的位置
     }
     
     // 测试
     public static void main(String[] args) {
-        int[] nums = {3, 2, 5, 1, 4};
+        int[] nums = {3, 2, 5, 1, 4, 83, 92,0,12,8,3,8,4};
         quicksort quickSort = new quicksort();
         quickSort.quickSort(nums);
         for (int num : nums) {
