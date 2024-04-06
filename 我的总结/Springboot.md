@@ -88,7 +88,7 @@ Spring Boot 的自动配置机制是 Spring Boot 框架的核心特性之一，�
 
    2. 使用@Transactional的类没有注入spring容器
 
-   3. 被@Transactional注解的方法不是public，因为@Transactional是通过动态代理技术实现的，而动态代理是从类的外部去获取类的实例对象，这个过程是无法调用类内部private方法所有会失效。
+   3. **被@Transactional注解的方法不是public**，**因为@Transactional是通过动态代理技术实现的**，而动态代理是从类的外部去获取类的实例对象，这个过程是无法调用类内部private方法所有会失效。
 
    4. 方法自调用，因为**默认只有在外部调用事务才会生效**，而方法自调用没有通过Spring的代理类。
 
@@ -148,3 +148,106 @@ Spring Boot 的自动配置机制是 Spring Boot 框架的核心特性之一，�
 2. **在没有规定配置的地方，采用默认配置，以力求最简配置为核心思想**
 
 总的来说，上面两条都遵循了**推荐默认配置**的思想。当存在特殊需求的时候，自定义配置即可。这样可以大大的减少配置工作，这就是所谓的“约定”。
+
+#### 7. Bean的创建方法
+
+1. **XML配置文件加载**：通过XML配置文件（通常是applicationContext.xml）来定义和配置bean。在XML文件中使用 `<bean>` 元素来声明一个bean，指定其类名、属性等信息。Spring容器在启动时会加载这些XML文件，并根据配置来创建和管理相应的bean。
+
+   ```xml
+   <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+   
+       <bean id="myBean" class="com.example.MyBean">
+           <property name="propertyName" value="propertyValue"/>
+       </bean>
+   
+   </beans>
+   ```
+
+2. **注解加载**：使用注解来标识bean，让Spring自动扫描并加载这些bean。通常使用 `@Component` 或其衍生注解（如 `@Service`、`@Repository`、`@Controller`）来标识一个类为一个Spring bean。
+
+   ```java
+   @Component
+   public class MyBean {
+       // Bean properties and methods
+   }
+   ```
+
+   在Spring的配置类上使用 `@ComponentScan` 来启用自动扫描，并指定扫描的包路径。
+
+   ```java
+   @Configuration
+   @ComponentScan("com.example")
+   public class AppConfig {
+       // Configuration settings
+   }
+   ```
+
+3. **Java配置类加载**：通过Java配置类来定义和配置bean。通常创建一个带有 `@Configuration` 注解的类，使用 `@Bean` 注解来标识方法返回的对象应该被Spring容器管理。
+
+   ```java
+   @Configuration
+   public class AppConfig {
+       @Bean
+       public MyBean myBean() {
+           return new MyBean();
+       }
+   }
+   ```
+
+
+#### 8. `@Scheduled`注解的作用和使用方法
+
+`@Scheduled`注解是spring boot提供的用于定时任务控制的注解,主要用于控制任务在某个指定时间执行,或者每隔一段时间执行.注意需要配合`@EnableScheduling`使用
+
+#### 9. IoC
+
+控制反转，将对象的创建进行反转。通常对象是由开发者自己创建，使用IoC可以根据配置文件根据需求自动创建所需对象。
+
+#### 10. AOP
+
+面向切面编程，抽象化的面向对象，AOP是基于IoC和动态代理机制实现的。在方法相似的位置执行相似的操作，将这些相似的位置抽象出来作为一个切面对象，对这个切面对象进行开发，从而在多个方法的相同位置都会执行统一的方法。
+
+将模块化方法从业务功能中抽离，最后实现的时候结合业务对象和aop对象生成一个代理对象。
+
+AOP功能：
+
+- 打印日志
+- 执行事务
+- 权限管理
+
+实现过程：
+
+1. 创建切面累类
+
+2. 创建切面方法，使用`JoinPoint`连接点获取原函数的参数和方法名
+
+3. 使用`@Before`、`AfterReturing`
+
+   ```java
+   @Component
+   @Aspect
+   public class Aspect {
+     @Before("execution(public int 完全类名 (..))")
+     public void before(JoinPoint joinPoint) {
+       String name = joinPoint.getSignature().getName();
+       sout(name + joinPoint.getArgs());
+     }
+     
+     @After是在方法执行之后但是在返回之前，所以拿不到返回值
+     
+     @AfterReturing(value="execution(public int 完全类名 (..))", returning = "result")
+     public void afterReturning(JoinPoint joinPoint, Object result) {
+       String name = joinPoint.getSignature().getName();
+       sout(name + result);
+     }
+   }
+   ```
+
+4. 配置自动扫包，开启自动生成代理对象。在`spring.xml`中配置扫描包的路径，并开启`aopAutoProxy`
+
+#### 11. lombok
+
+在实体类上使用`@Data`注解可以帮助我们自动生成`get()`、`set()`、`toString()`、构造方法。

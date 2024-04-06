@@ -77,31 +77,31 @@ class Test {
     // 快速排序
     // 稳定性：不稳定
     // 时间复杂度：最好：O(nlogn),平均：O(nlogn),最差：O(n^2)
-    public static void quickSort(int[] arr) {
-        if(arr.length <= 1) return;
-        sort(arr, 0, arr.length - 1);
+    public static void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
-    public static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-    public static void sort(int[] arr, int low, int high) {
-        if(low >= high) return;
-        int middle = swapAndFind(arr, low, high);
-        sort(arr, low, middle - 1);
-        sort(arr, middle + 1, high);
-    }
-    public static int swapAndFind(int[] arr, int low, int high) {
-        int base = arr[low];
-        int i = low, j = high;
+    public static int sort(int[] nums, int left, int right) {
+        int base = nums[left];
+        int i = left, j = right;
         while(i < j) {
-            while(i < j && arr[j] >= base) j--;
-            while(i < j && arr[i] <= base) i++;
-            swap(arr, i, j);
+            while(i < j && nums[j] >= base) j--;
+            while(i < j && nums[i] <= base) i++;
+            swap(nums, i, j);
         }
-        swap(arr, low, i);
+        swap(nums, left, i);
         return i;
+    }
+    public static void quick_sort(int[] nums, int left, int right) {
+        if(left >= right) return;
+        int mid = sort(nums, left, right);
+        quick_sort(nums, left, mid - 1);
+        quick_sort(nums, mid + 1, right);;
+    }
+    public static void quickSort(int[] nums) {
+        if(nums.length <= 1) return;
+        quick_sort(nums, 0, nums.length - 1);
     }
     
     // 堆排序
